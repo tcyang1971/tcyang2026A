@@ -35,7 +35,29 @@ def index():
     link += "<a href=/math2>次方與根號計算</a><hr>" 
     link += "<a href=/cup>擲茭</a><hr>"
     link += "<a href=/read>讀取Firestore資料(根據lab遞減排序,取前4)</a><br>"
+    link += "<a href=/search>根據教師姓名關鍵字進行查詢</a><br>"
     return link
+
+@app.route("/search", methods=["GET", "POST"])
+def search():
+    db = firestore.client()
+    results = []
+    keyword = ""
+    
+    if request.method == "POST":
+        keyword = request.form.get("keyword")
+        collection_ref = db.collection("靜宜資管2026a")
+        docs = collection_ref.get()
+
+        for doc in docs:
+            user = doc.to_dict()
+            if keyword in user["name"]:
+                results.append({
+                    "name": user["name"],
+                    "lab": user["lab"]
+                })
+
+    return render_template("search.html", results=results, keyword=keyword)
 
 @app.route("/read")
 def read():
