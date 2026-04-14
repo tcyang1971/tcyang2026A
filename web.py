@@ -25,18 +25,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    link = "<h1>歡迎進入楊子青的網站首頁</h1>"
-    link += "<a href=/mis>課程</a><hr>"
-    link += "<a href=/today>今天日期</a><hr>"
-    link += "<a href=/about>關於子青</a><hr>"
-    link += "<a href=/welcome?u=子青&dep=靜宜資管>GET傳值</a><hr>"   
-    link += "<a href=/account>POST傳值(帳號密碼)</a><hr>" 
-    link += "<a href=/math>數學運算</a><hr>" 
-    link += "<a href=/math2>次方與根號計算</a><hr>" 
-    link += "<a href=/cup>擲茭</a><hr>"
-    link += "<a href=/read>讀取Firestore資料(根據lab遞減排序,取前4)</a><hr>"
-    link += "<a href=/search>根據教師姓名關鍵字進行查詢</a><hr>"
-    return link
+    return render_template("index.html", results=results, keyword=keyword)
 
 @app.route("/search", methods=["GET", "POST"])
 def search():
