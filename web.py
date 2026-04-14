@@ -34,8 +34,8 @@ def index():
     link += "<a href=/math>數學運算</a><hr>" 
     link += "<a href=/math2>次方與根號計算</a><hr>" 
     link += "<a href=/cup>擲茭</a><hr>"
-    link += "<a href=/read>讀取Firestore資料(根據lab遞減排序,取前4)</a><br>"
-    link += "<a href=/search>根據教師姓名關鍵字進行查詢</a><br>"
+    link += "<a href=/read>讀取Firestore資料(根據lab遞減排序,取前4)</a><hr>"
+    link += "<a href=/search>根據教師姓名關鍵字進行查詢</a><hr>"
     return link
 
 @app.route("/search", methods=["GET", "POST"])
