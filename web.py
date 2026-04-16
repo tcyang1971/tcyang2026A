@@ -27,10 +27,6 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
-    link += "<a href=/read2>讀取Firestore資料(根據姓名關鍵字:楊)</a><hr>"
-    link += "<a href=/spider1>爬取子青老師本學期課程</a><hr>"
-    return link
-
 @app.route("/spider1")
 def spider1():
     R = ""
@@ -43,22 +39,6 @@ def spider1():
     for i in result:
         R += i.text + i.get("href") + "<br>" 
     return R
-
-
-@app.route("/read")
-def read():
-    Result = ""
-    db = firestore.client()
-    collection_ref = db.collection("靜宜資管2026B")    
-    docs = collection_ref.get()
-    docs = collection_ref.order_by("lab", direction=firestore.Query.DESCENDING).get()
-    for doc in docs:         
-        Result += str(doc.to_dict()) + "<br>"    
-
-    if Result == "":
-        Result = "抱歉,查無此關鍵字姓名之老師資料"    
-    return Result
-
 
 @app.route("/search", methods=["GET", "POST"])
 def search():
