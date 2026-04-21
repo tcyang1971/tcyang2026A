@@ -30,6 +30,11 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
+@app.route("/sp1")
+def sp1():
+    R = "20260421"
+    return R
+
 @app.route("/spider1")
 def spider1():
     R = ""
