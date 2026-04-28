@@ -30,6 +30,32 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
+@app.route("/movie3", methods=["GET", "POST"])
+def movie3():
+    db = firestore.client()
+    results = []
+    keyword = ""
+    
+    if request.method == "POST":
+        keyword = request.form.get("keyword")
+        collection_ref = db.collection("電影2A")
+        docs = collection_ref.get()
+
+        for doc in docs:
+            movie = doc.to_dict()
+            if keyword in movie["title"]:
+                results.append({
+                    "title":  movie["title"],
+                    "picture": movie["picture"],
+                    "hyperlink": movie["hyperlink"],
+                    "showDate": movie["showDate"],
+                    "showLength": movie["showLength"],
+                    "lastUpdate": movie["lastUpdate"]
+                })
+
+    return render_template("movie3.html", results=results, keyword=keyword)
+
+
 @app.route("/movie2")
 def movie2():
   url = "http://www.atmovies.com.tw/movie/next/"
