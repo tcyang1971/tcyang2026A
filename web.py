@@ -1,11 +1,14 @@
 import requests
 from bs4 import BeautifulSoup
 
+from flask import Flask, render_template, request
+from datetime import datetime
+import random
+
 import os
 import json
 import firebase_admin
 from firebase_admin import credentials, firestore
-from google.cloud.firestore_v1.base_query import FieldFilter
 
 # 判斷是在 Vercel 還是本地
 if os.path.exists('serviceAccountKey.json'):
@@ -20,9 +23,6 @@ else:
 firebase_admin.initialize_app(cred)
 
 
-from flask import Flask, render_template, request
-from datetime import datetime
-import random
 
 app = Flask(__name__)
 
@@ -30,9 +30,21 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
-@app.route("/test")
-def test():
-    return "呂恩妮"
+@app.route("/movie1")
+def movie1():
+    R = ""
+    url = "https://www.atmovies.com.tw/movie/next/"
+    Data = requests.get(url)
+    Data.encoding = "utf-8"
+    #print(Data.text)
+    sp = BeautifulSoup(Data.text, "html.parser")
+    result=sp.select(".filmListAllX li")
+    for item in result:
+        introduce = "https://www.atmovies.com.tw" + item.find("a").get("href")
+        R +=  "<a href=" + introduce + ">" + item.find("img").get("alt") + "</a><br>"
+        post = "https://www.atmovies.com.tw" + item.find("img").get("src")
+        R += "<img src=" + post + "> </img><br><br>" 
+    return R    
 
 @app.route("/spider1")
 def spider1():
@@ -55,7 +67,7 @@ def search():
     
     if request.method == "POST":
         keyword = request.form.get("keyword")
-        collection_ref = db.collection("靜宜資管2026B")
+        collection_ref = db.collection("靜宜資管2026a")
         docs = collection_ref.get()
 
         for doc in docs:
@@ -68,31 +80,42 @@ def search():
 
     return render_template("search.html", results=results, keyword=keyword)
 
+
+@app.route("/read2")
+def read2():
+    Result = ""
+    keyword = "楊"
+    db = firestore.client()
+    collection_ref = db.collection("靜宜資管2026B")    
+    docs = collection_ref.get()
+    for doc in docs: 
+        teacher = doc.to_dict()
+        if keyword in teacher["name"]:        
+            Result += str(teacher) + "<br>"
+
+    if Result == "":
+        Result = "抱歉,查無此關鍵字姓名之老師資料"    
+    return Result
+
 @app.route("/read")
 def read():
+    Result = ""
     db = firestore.client()
-
-    Temp = ""
-    collection_ref = db.collection("靜宜資管2026B")
-    docs = collection_ref.order_by("lab", direction=firestore.Query.DESCENDING).limit(4).get()
-    for doc in docs:
-        Temp += str(doc.to_dict()) + "<br>"
-
-    return Temp
-
+    collection_ref = db.collection("靜宜資管2026B")    
+    docs = collection_ref.get()
+    docs = collection_ref.order_by("lab", direction=firestore.Query.DESCENDING).get()
+    for doc in docs:         
+        Result += str(doc.to_dict()) + "<br>"    
+    return Result
 
 @app.route("/mis")
 def course():
-    return "<h1>資訊管理導論</h1><a href=/>回到網站首頁</a>"
+    return "<h1>資訊管理導論</h1><a href=/>返回首頁</a>"
 
 @app.route("/today")
 def today():
     now = datetime.now()
-    year  = str(now.year)   # 取得年份 
-    month = str(now.month)  # 取得月份 
-    day   = str(now.day)    # 取得日期 
-    now = year + "年" + month + "月" + day + "日"
-    return render_template("today.html", datetime = now)
+    return render_template("today.html", datetime=str(now))
 
 @app.route("/about")
 def about():
@@ -100,9 +123,11 @@ def about():
 
 @app.route("/welcome", methods=["GET"])
 def welcome():
-    x = request.values.get("u")
-    y = request.values.get("dep")
-    return render_template("welcome.html", name = x, dep = y)
+    user = request.values.get("u")
+    d = request.values.get("d")
+    c = request.values.get("c")    
+    return render_template("welcome.html", name= user, dep = d, course = c)
+
 
 @app.route("/account", methods=["GET", "POST"])
 def account():
@@ -113,6 +138,7 @@ def account():
         return result
     else:
         return render_template("account.html")
+
 
 @app.route("/math", methods=["GET", "POST"])
 def math():
@@ -192,6 +218,7 @@ def math2():
             case _:
                 result = "請輸入∧(次方)或√(根號)"
     return render_template("math2.html", result=result)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
