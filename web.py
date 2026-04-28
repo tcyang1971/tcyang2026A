@@ -64,9 +64,6 @@ def movie2():
     doc_ref.set(doc)    
   return "近期上映電影已爬蟲及存檔完畢，網站最近更新日期為：" + lastUpdate 
 
-
-
-
 @app.route("/movie1")
 def movie1():
     R = ""
