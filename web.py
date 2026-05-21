@@ -31,6 +31,11 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/webdemo")
+def webdemo():
+    return render_template("webdemo.html")
+
+
 @app.route("/demo")
 def demo():
     return render_template("demo.html")
