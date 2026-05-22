@@ -1,6 +1,3 @@
-from PIL import Image
-import numpy as np, easyocr
-
 import requests
 from bs4 import BeautifulSoup
 
@@ -32,37 +29,6 @@ app = Flask(__name__)
 @app.route("/")
 def index():
     return render_template("index.html")
-
-@app.route('/upload', methods=['GET', 'POST']) 
-def upload():
-    if request.method == "POST":
-        file = request.files.get('file') 
-        if file and file.filename != '':
-            img = Image.open(file)
-            img_np = np.array(img)
-
-            # 初始化辨識器，設定為英文模型（車牌主要組成）
-            reader = easyocr.Reader(['en'], gpu=False) 
-
-            # 進行文字辨識
-            results = reader.readtext(img_np)
-
-            # 輸出辨識結果
-            if not results:
-              msg = "沒偵測到任何文字，請確認圖片中車牌是否清晰。"
-            else:
-              msg = "偵測到文字: "
-              for res in results:
-                text = res[1]       # 辨識出的文字
-                msg += text + "<br>"
-
-            return msg    
-            #eturn jsonify({"shape": img_np.shape, "dtype": str(img_np.dtype)})
-        else:    
-            return "請選擇檔案", 400
-    else:    
-        return render_template("file.html") 
-
 
 
 @app.route("/webdemo")
