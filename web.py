@@ -30,8 +30,7 @@ firebase_admin.initialize_app(cred)
 
 
 app = Flask(__name__)
-api_key = os.getenv("API_KEY")
-client = genai.Client(api_key=api_key)
+client = genai.Client()
 
 @app.route("/")
 def index():
