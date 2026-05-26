@@ -112,36 +112,43 @@ def webhook():
 
         info += result
 
+
     elif (action == "input.unknown"):
-        #info =  req["queryResult"]["queryText"]
 
-        ai_config = types.GenerateContentConfig(
-            max_output_tokens=500, 
+        instruction_text = (
+            "你是一個專業的智慧助理。不論使用者的問題有多簡短，你的回答都必須嚴格超過100個字，上限200字。"
+            "請一律按照這個結構回答：先用一句話直接回答重點，接著詳細補充兩到三個相關的原因、背景細節或具體例子，最後加上一句親切的建議或總結。"
+            "請將這些內容組合成一個流暢的段落，絕對不能只回答一兩句話，一定要寫滿字數。"
+        )
 
-            system_instruction=(
-                "你是一個熱心且知識豐富的專業智慧助理。對於使用者的任何提問，"
-                "不論問題多麼簡短，你的回答都「必須嚴格遵守超過 100 個中文字」的規定。\n\n"
-                "為了解決字數不足的問題，請你一律按照以下「三段式結構」來撰寫回答：\n"
-                "1.【核心解答】：先用 1-2 句話直接回答使用者的問題重點。\n"
-                "2.【詳細延伸】：主動幫使用者補充相關的背景知識、核心特色、或是具體包含哪些項目（這部分請多寫一點）。\n"
-                "3.【貼心建議】：最後加上一句對未來的建議、出路方向或親切的問候語。\n\n"
-                "請將這三部分結合成一個流暢的段落，絕對不要敷衍，一定要寫滿 100 到 200 字。"
+        try:
+            ai_config = types.GenerateContentConfig(
+                max_output_tokens=500, # 放大上限
+                system_instruction=instruction_text
             )
-            
-        )
 
-        response_stream = client.models.generate_content_stream(
-            model='gemini-2.5-flash', 
-            contents=req["queryResult"]["queryText"],
-            config=ai_config,
-        )
+            response_stream = client.models.generate_content_stream(
+                model='gemini-2.5-flash', 
+                contents=req["queryResult"]["queryText"],
+                config=ai_config,
+            )
 
-        info = ""
-        for chunk in response_stream:
-            info += chunk.text
+            info = ""
+            for chunk in response_stream:
+                # 安全檢查：確保 chunk.text 不是 None 再加進去
+                if chunk.text:
+                    info += chunk.text
+
+            # 如果不幸 AI 還是卡住吐出空字串，給予安全字數的預設回答
+            if not info.strip():
+                info = "您好！關於您詢問的問題，目前系統正在為您查詢更詳細的資訊。一般而言，這包含了核心的技術應用與未來的發展趨勢，建議您可以稍後再試一次，或者提供更流暢的完整句子，好讓我能為您帶來更詳盡、更符合您需求的解答喔！"
+
+        except Exception as e:
+            print(f"Gemini 發生錯誤: {e}")
+            # 發生例外時的保底回答（超過100字）
+            info = "真是不好意思，剛才系統連線稍微有點異常，沒辦法即時為您產生最完整的答案。關於您關心的內容，建議您可以嘗試重新輸入看看，或是整理成更流暢的問題。我會在這裡隨時準備好為您提供大數據、雲端運算與各項專業領域的詳細解答，謝謝您的耐心配合！"
 
     return make_response(jsonify({"fulfillmentText": info}))
-
 
 
 @app.route("/rate")
