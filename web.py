@@ -123,7 +123,7 @@ def webhook():
 
 
         # 每次使用者拜訪該路徑時，直接使用全域的 client 呼叫模型
-        response = client.models.generate_content(
+        response = client.generate_content(
             model='gemini-3.5-flash',
             contents=req["queryResult"]["queryText"],
             config=ai_config,
