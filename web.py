@@ -115,7 +115,7 @@ def webhook():
     elif (action == "input.unknown"):
         #info =  req["queryResult"]["queryText"]
 
-        ai_config = config=types.GenerateContentConfig(
+        ai_config = types.GenerateContentConfig(
             max_output_tokens=500, 
 
             system_instruction=(
