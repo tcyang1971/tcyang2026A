@@ -121,33 +121,24 @@ def webhook():
             "請將這些內容組合成一個流暢的段落，絕對不能只回答一兩句話，一定要寫滿字數。"
         )
 
-        try:
-            ai_config = types.GenerateContentConfig(
-                max_output_tokens=500, # 放大上限
-                system_instruction=instruction_text
-            )
 
-            response_stream = client.models.generate_content_stream(
-                model='gemini-2.5-flash', 
-                contents=req["queryResult"]["queryText"],
-                config=ai_config,
-            )
+        ai_config = types.GenerateContentConfig(
+            max_output_tokens=500, # 放大上限
+            system_instruction=instruction_text
+        )
 
-            info = ""
-            for chunk in response_stream:
-                # 安全檢查：確保 chunk.text 不是 None 再加進去
-                if chunk.text:
-                    info += chunk.text
+        response_stream = client.models.generate_content_stream(
+            model='gemini-2.5-flash', 
+            contents=req["queryResult"]["queryText"],
+            config=ai_config,
+        )
 
-            # 如果不幸 AI 還是卡住吐出空字串，給予安全字數的預設回答
-            if not info.strip():
-                info = "您好！關於您詢問的問題，目前系統正在為您查詢更詳細的資訊。一般而言，這包含了核心的技術應用與未來的發展趨勢，建議您可以稍後再試一次，或者提供更流暢的完整句子，好讓我能為您帶來更詳盡、更符合您需求的解答喔！"
-
-        except Exception as e:
-            print(f"Gemini 發生錯誤: {e}")
-            # 發生例外時的保底回答（超過100字）
-            info = "真是不好意思，剛才系統連線稍微有點異常，沒辦法即時為您產生最完整的答案。關於您關心的內容，建議您可以嘗試重新輸入看看，或是整理成更流暢的問題。我會在這裡隨時準備好為您提供大數據、雲端運算與各項專業領域的詳細解答，謝謝您的耐心配合！"
-
+        info = ""
+        for chunk in response_stream:
+            # 安全檢查：確保 chunk.text 不是 None 再加進去
+            if chunk.text:
+                info += chunk.text
+                
     return make_response(jsonify({"fulfillmentText": info}))
 
 
