@@ -117,7 +117,8 @@ def webhook():
 
         # 2. 建立設定物件，設定你希望限制的最大 Token 數（例如 500）
         ai_config = types.GenerateContentConfig(
-            max_output_tokens = 500
+            max_output_tokens = 300, # 壓低字數，換取 5 秒內安全通關
+            temperature = 0.3
         )
 
 
