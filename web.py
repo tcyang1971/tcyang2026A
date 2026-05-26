@@ -1,6 +1,8 @@
 #pip install google-genai
 from google import genai
 
+from google.genai import types
+
 #from PIL import Image
 #import numpy as np, easyocr
 
@@ -109,10 +111,17 @@ def webhook():
     elif (action == "input.unknown"):
         #info =  req["queryResult"]["queryText"]
 
+        # 2. 建立設定物件，設定你希望限制的最大 Token 數（例如 500）
+        ai_config = types.GenerateContentConfig(
+            max_output_tokens = 128
+        )
+
+
         # 每次使用者拜訪該路徑時，直接使用全域的 client 呼叫模型
         response = client.models.generate_content(
             model='gemini-3.5-flash',
             contents=req["queryResult"]["queryText"],
+            config=ai_config,
         )
         
         # 回傳生成的文字
