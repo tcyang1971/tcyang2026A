@@ -117,7 +117,12 @@ def webhook():
 
         ai_config = config=types.GenerateContentConfig(
             max_output_tokens=500, 
-            system_instruction="你是一個簡短精確的助理，回答請控制在 100 字以內，直接講重點。"
+
+            system_instruction=(
+                "你是一個親切且專業的助理。請針對用戶的問題提供完整、條理清晰的回答。"
+                "回答內容請控制在 80 到 120 個中文字之間，可以直接列出要點。"
+            )
+            
         )
 
         response_stream = client.models.generate_content_stream(
