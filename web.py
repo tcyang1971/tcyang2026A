@@ -126,7 +126,7 @@ def webhook():
         )
 
         response_stream = client.models.generate_content_stream(
-            model='gemini-3.5-flash', 
+            model='gemini-2.5-flash', 
             contents=req["queryResult"]["queryText"],
             config=ai_config,
         )
