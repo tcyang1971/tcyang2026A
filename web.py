@@ -116,11 +116,11 @@ def webhook():
         #info =  req["queryResult"]["queryText"]
 
         ai_config = types.GenerateContentConfig(
-            max_output_tokens=500, 
+            max_output_tokens=300, 
 
             system_instruction=(
-                "你是一個專業的助理。請提供重點的回答。"
-                "回答內容請控制在 200 到 300 個中文字之間。"
+                "你是一個專業的助理。請提供重點且關鍵的回答，不要重複問題。"
+                "請控制在 100 到 200 個中文字之間。"
             )
             
         )
