@@ -115,23 +115,20 @@ def webhook():
     elif (action == "input.unknown"):
         #info =  req["queryResult"]["queryText"]
 
-        # 2. 建立設定物件，設定你希望限制的最大 Token 數（例如 500）
-        ai_config = types.GenerateContentConfig(
-            max_output_tokens = 500, # 壓低字數，換取 5 秒內安全通關
-            temperature = 0.02
+        ai_config = config=types.GenerateContentConfig(
+            max_output_tokens=150, 
+            system_instruction="你是一個簡短精確的助理，回答請控制在 50 字以內，直接講重點。"
         )
 
-
-        # 每次使用者拜訪該路徑時，直接使用全域的 client 呼叫模型
-        response = client.models.generate_content(
-            model='gemini-3.5-flash',
+        response_stream = client.models.generate_content_stream(
+            model='gemini-3.5-flash', 
             contents=req["queryResult"]["queryText"],
             config=ai_config,
         )
-        
-        # 回傳生成的文字
-        info = response.text
 
+        info = ""
+        for chunk in response_stream:
+            info += chunk.text
 
     return make_response(jsonify({"fulfillmentText": info}))
 
