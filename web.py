@@ -119,14 +119,14 @@ def webhook():
             max_output_tokens=300, 
 
             system_instruction=(
-                "你是一個專業的助理。請提供重點且關鍵的回答，不要重複問題。"
-                "請控制在 100 到 200 個中文字之間。"
+                "你是一個專業的助理。請提供重點且關鍵的回答，不要重複問題。\n"
+                "注意：你的回答絕對不能少於 100 個字！如果答案太短，請主動為使用者延伸補充相關的背景知識或實用建議，直到字數達到 100-200 字之間為止。"
             )
             
         )
 
         response_stream = client.models.generate_content_stream(
-            model='gemini-2.5-flash', 
+            model='gemini-3.5-flash', 
             contents=req["queryResult"]["queryText"],
             config=ai_config,
         )
