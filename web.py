@@ -116,7 +116,7 @@ def webhook():
         #info =  req["queryResult"]["queryText"]
 
         ai_config = types.GenerateContentConfig(
-            max_output_tokens=500, 
+            max_output_tokens=300, 
 
             system_instruction=(
                 "你是一個專業且知識豐富的助理。\n"
@@ -131,7 +131,7 @@ def webhook():
         )
 
         response_stream = client.models.generate_content_stream(
-            model='gemini-3.5-flash', 
+            model='gemini-2.5-flash', 
             contents=req["queryResult"]["queryText"],
             config=ai_config,
         )
