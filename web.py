@@ -30,6 +30,7 @@ firebase_admin.initialize_app(cred)
 
 
 app = Flask(__name__)
+
 client = genai.Client()
 
 @app.route("/")
