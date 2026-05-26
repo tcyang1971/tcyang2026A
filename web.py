@@ -116,7 +116,7 @@ def webhook():
         #info =  req["queryResult"]["queryText"]
 
         ai_config = types.GenerateContentConfig(
-            max_output_tokens=300, 
+            max_output_tokens=500, 
 
             system_instruction=(
                 "你是一個專業且知識豐富的助理。\n"
@@ -125,13 +125,13 @@ def webhook():
                 "1. 核心解答：先用一句話精準回答問題。\n"
                 "2. 背景與細節補充：詳細說明其原因、發展、包含哪些細節或具體例子。\n"
                 "3. 實用建議或總結：提供 1-2 句延伸的實用建議或親切的總結。\n"
-                "請用流暢的段落回答，不要重複問題，並且一定要滿足最低 100 字的要求。"
+                "你「絕對不能」只回答一兩句話、如果問題很簡短你必須主動延伸。"
             )
             
         )
 
         response_stream = client.models.generate_content_stream(
-            model='gemini-2.5-flash', 
+            model='gemini-3.5-flash', 
             contents=req["queryResult"]["queryText"],
             config=ai_config,
         )
