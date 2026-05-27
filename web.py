@@ -122,7 +122,7 @@ def webhook():
 
 
         ai_config = types.GenerateContentConfig(
-            max_output_tokens=300, 
+            max_output_tokens=500, 
             system_instruction=instruction_text
         )
 
