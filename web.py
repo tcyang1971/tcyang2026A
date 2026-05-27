@@ -117,7 +117,7 @@ def webhook():
 
         instruction_text = (
             "你是一個熱心且知識豐富的專業智慧助理。對於使用者的任何提問，"
-            "不論問題多麼簡短，你的回答必須「嚴格遵守超過 150 個中文字」的規定，"
+            "不論問題多麼簡短，你的回答必須「嚴格遵守超過 100 個中文字」的規定，"
             "請勿草率結束。 請直接提供重點的關鍵字，不要重述問題。"           
         )
 
@@ -127,7 +127,7 @@ def webhook():
             system_instruction=instruction_text
         )
 
-        response_stream = client.models.generate_content(
+        response = client.models.generate_content(
             model='gemini-3.5-flash', 
             contents=req["queryResult"]["queryText"],
             config=ai_config,
