@@ -117,8 +117,8 @@ def webhook():
 
         instruction_text = (
             "你是一個熱心且知識豐富的專業智慧助理。對於使用者的任何提問，"
-            "不論問題多麼簡短，你的回答都「必須嚴格遵守超過 100 個中文字」的規定。"
-            "請直接提供重點的關鍵字，不要重述問題。"           
+            "不論問題多麼簡短，你的回答必須「嚴格遵守超過 150 個中文字」的規定，"
+            "請勿草率結束。 請直接提供重點的關鍵字，不要重述問題。"           
         )
 
 
@@ -127,17 +127,16 @@ def webhook():
             system_instruction=instruction_text
         )
 
-        response_stream = client.models.generate_content_stream(
+        response_stream = client.models.generate_content(
             model='gemini-3.5-flash', 
             contents=req["queryResult"]["queryText"],
             config=ai_config,
         )
 
-        info = ""
-        for chunk in response_stream:
-            # 安全檢查：確保 chunk.text 不是 None 再加進去
-            if chunk.text:
-                info += chunk.text
+        if response.text:
+            info = response.text
+        else:
+            info = "抱歉，我現在無法生成回應，請稍後再試。"
 
     return make_response(jsonify({"fulfillmentText": info}))
 
