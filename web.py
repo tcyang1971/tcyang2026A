@@ -76,7 +76,9 @@ def ask():
 
 
 
-
+@app.route("/message")
+def message():
+    return render_template("message.html")
 
 
 @app.route("/webdemo")
